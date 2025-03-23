@@ -5,6 +5,25 @@
         html, body, #map {
 			overflow: hidden;
         }
+		header {
+			position: relative;
+			text-align: center;
+			padding: 15px;
+			background-color: #ffffffcc; /* blanco con transparencia */
+			border-bottom: 2px solid #4CAF50;
+			font-family: Arial, sans-serif;
+		}
+		header h1 {
+			font-size: 22px;
+			color: #2e7d32;
+			margin-bottom: 5px;
+		}
+		header h3 {
+			font-size: 16px;
+			color: #333333;
+			font-weight: normal;
+			margin-top: 0;
+		}
         .col9{
 			height: 100%!important;
 		}
