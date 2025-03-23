@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/V3LimAsturias_2.js"></script>
+        <script src="data/Centroides_3.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[43.07636269556715,-6.991567033555085],[43.65543294609237,-5.910770550609062]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_N_SppFerns_Asturias_Cortado_0');
+        map.getPane('pane_N_SppFerns_Asturias_Cortado_0').style.zIndex = 400;
+        var img_N_SppFerns_Asturias_Cortado_0 = 'data/N_SppFerns_Asturias_Cortado_0.png';
+        var img_bounds_N_SppFerns_Asturias_Cortado_0 = [[42.86954698558464,-7.198483506802709],[43.690337540113454,-4.499484213465492]];
+        var layer_N_SppFerns_Asturias_Cortado_0 = new L.imageOverlay(img_N_SppFerns_Asturias_Cortado_0,
+                                              img_bounds_N_SppFerns_Asturias_Cortado_0,
+                                              {pane: 'pane_N_SppFerns_Asturias_Cortado_0'});
+        bounds_group.addLayer(layer_N_SppFerns_Asturias_Cortado_0);
+        map.addLayer(layer_N_SppFerns_Asturias_Cortado_0);
+        map.createPane('pane_N_SppFerns_Asturias_Cortado_Lineas_1');
+        map.getPane('pane_N_SppFerns_Asturias_Cortado_Lineas_1').style.zIndex = 401;
+        var img_N_SppFerns_Asturias_Cortado_Lineas_1 = 'data/N_SppFerns_Asturias_Cortado_Lineas_1.png';
+        var img_bounds_N_SppFerns_Asturias_Cortado_Lineas_1 = [[42.86954698558464,-7.198483506802709],[43.690337540113454,-4.499484213465492]];
+        var layer_N_SppFerns_Asturias_Cortado_Lineas_1 = new L.imageOverlay(img_N_SppFerns_Asturias_Cortado_Lineas_1,
+                                              img_bounds_N_SppFerns_Asturias_Cortado_Lineas_1,
+                                              {pane: 'pane_N_SppFerns_Asturias_Cortado_Lineas_1'});
+        bounds_group.addLayer(layer_N_SppFerns_Asturias_Cortado_Lineas_1);
+        map.addLayer(layer_N_SppFerns_Asturias_Cortado_Lineas_1);
+        function pop_V3LimAsturias_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_Leng'] !== null ? autolinker.link(String(feature.properties['shape_Leng']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_Area'] !== null ? autolinker.link(String(feature.properties['shape_Area']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_V3LimAsturias_2_0() {
+            return {
+                pane: 'pane_V3LimAsturias_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(213,180,60,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_V3LimAsturias_2');
+        map.getPane('pane_V3LimAsturias_2').style.zIndex = 402;
+        map.getPane('pane_V3LimAsturias_2').style['mix-blend-mode'] = 'normal';
+        var layer_V3LimAsturias_2 = new L.geoJson(json_V3LimAsturias_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_V3LimAsturias_2',
+            layerName: 'layer_V3LimAsturias_2',
+            pane: 'pane_V3LimAsturias_2',
+            onEachFeature: pop_V3LimAsturias_2,
+            style: style_V3LimAsturias_2_0,
+        });
+        bounds_group.addLayer(layer_V3LimAsturias_2);
+        map.addLayer(layer_V3LimAsturias_2);
+        function pop_Centroides_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NUMPOINTS'] !== null ? autolinker.link(String(feature.properties['NUMPOINTS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Centroides_3_0() {
+            return {
+                pane: 'pane_Centroides_3',
+                radius: 1.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Centroides_3');
+        map.getPane('pane_Centroides_3').style.zIndex = 403;
+        map.getPane('pane_Centroides_3').style['mix-blend-mode'] = 'normal';
+        var layer_Centroides_3 = new L.geoJson(json_Centroides_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Centroides_3',
+            layerName: 'layer_Centroides_3',
+            pane: 'pane_Centroides_3',
+            onEachFeature: pop_Centroides_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Centroides_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Centroides_3);
+        map.addLayer(layer_Centroides_3);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"NUMPOINTS": "real","shape_Area": "real","shape_Leng": "real","COD10X10": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_NUMPOINTS = document.createElement("div");
+            div_NUMPOINTS.id = "div_NUMPOINTS";
+            div_NUMPOINTS.className = "slider";
+            document.getElementById("menu").appendChild(div_NUMPOINTS);
+            var lab_NUMPOINTS = document.createElement('div');
+            lab_NUMPOINTS.innerHTML  = 'NUMPOINTS: <span id="val_NUMPOINTS"></span>';
+            lab_NUMPOINTS.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_NUMPOINTS);
+            var reset_NUMPOINTS = document.createElement('div');
+            reset_NUMPOINTS.innerHTML = 'clear filter';
+            reset_NUMPOINTS.className = 'filterlabel';
+            lab_NUMPOINTS.className = 'filterlabel';
+            reset_NUMPOINTS.onclick = function() {
+                sel_NUMPOINTS.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_NUMPOINTS);
+            var sel_NUMPOINTS = document.getElementById('div_NUMPOINTS');
+            noUiSlider.create(sel_NUMPOINTS, {
+                connect: true,
+                start: [1.0, 31.0],
+                range: {
+                min: 1.0,
+                max: 31.0
+                }
+            });
+            sel_NUMPOINTS.noUiSlider.on('update', function (values) {
+            val_NUMPOINTS = document.getElementById('val_NUMPOINTS');
+            val_NUMPOINTS.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_shape_Area = document.createElement("div");
+            div_shape_Area.id = "div_shape_Area";
+            div_shape_Area.className = "slider";
+            document.getElementById("menu").appendChild(div_shape_Area);
+            var lab_shape_Area = document.createElement('div');
+            lab_shape_Area.innerHTML  = 'shape_Area: <span id="val_shape_Area"></span>';
+            lab_shape_Area.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_shape_Area);
+            var reset_shape_Area = document.createElement('div');
+            reset_shape_Area.innerHTML = 'clear filter';
+            reset_shape_Area.className = 'filterlabel';
+            lab_shape_Area.className = 'filterlabel';
+            reset_shape_Area.onclick = function() {
+                sel_shape_Area.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_shape_Area);
+            var sel_shape_Area = document.getElementById('div_shape_Area');
+            noUiSlider.create(sel_shape_Area, {
+                connect: true,
+                start: [10605732110.5, 10605732110.5],
+                range: {
+                min: 10605732110.5,
+                max: 10605732110.5
+                }
+            });
+            sel_shape_Area.noUiSlider.on('update', function (values) {
+            val_shape_Area = document.getElementById('val_shape_Area');
+            val_shape_Area.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_shape_Leng = document.createElement("div");
+            div_shape_Leng.id = "div_shape_Leng";
+            div_shape_Leng.className = "slider";
+            document.getElementById("menu").appendChild(div_shape_Leng);
+            var lab_shape_Leng = document.createElement('div');
+            lab_shape_Leng.innerHTML  = 'shape_Leng: <span id="val_shape_Leng"></span>';
+            lab_shape_Leng.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_shape_Leng);
+            var reset_shape_Leng = document.createElement('div');
+            reset_shape_Leng.innerHTML = 'clear filter';
+            reset_shape_Leng.className = 'filterlabel';
+            lab_shape_Leng.className = 'filterlabel';
+            reset_shape_Leng.onclick = function() {
+                sel_shape_Leng.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_shape_Leng);
+            var sel_shape_Leng = document.getElementById('div_shape_Leng');
+            noUiSlider.create(sel_shape_Leng, {
+                connect: true,
+                start: [1114862.8304, 1114862.8304],
+                range: {
+                min: 1114862.8304,
+                max: 1114862.8304
+                }
+            });
+            sel_shape_Leng.noUiSlider.on('update', function (values) {
+            val_shape_Leng = document.getElementById('val_shape_Leng');
+            val_shape_Leng.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_COD10X10 = document.createElement('div');
+            div_COD10X10.id = "div_COD10X10";
+            div_COD10X10.className= "filterselect";
+            document.getElementById("menu").appendChild(div_COD10X10);
+            sel_COD10X10 = document.createElement('select');
+            sel_COD10X10.multiple = true;
+            sel_COD10X10.size = 10;
+            sel_COD10X10.id = "sel_COD10X10";
+            var COD10X10_options_str = "<option value='' unselected></option>";
+            sel_COD10X10.onchange = function(){filterFunc()};
+            COD10X10_options_str  += '<option value="29TPH58">29TPH58</option>';
+            COD10X10_options_str  += '<option value="29TPH59">29TPH59</option>';
+            COD10X10_options_str  += '<option value="29TPH66">29TPH66</option>';
+            COD10X10_options_str  += '<option value="29TPH67">29TPH67</option>';
+            COD10X10_options_str  += '<option value="29TPH68">29TPH68</option>';
+            COD10X10_options_str  += '<option value="29TPH69">29TPH69</option>';
+            COD10X10_options_str  += '<option value="29TPH75">29TPH75</option>';
+            COD10X10_options_str  += '<option value="29TPH76">29TPH76</option>';
+            COD10X10_options_str  += '<option value="29TPH77">29TPH77</option>';
+            COD10X10_options_str  += '<option value="29TPH78">29TPH78</option>';
+            COD10X10_options_str  += '<option value="29TPH79">29TPH79</option>';
+            COD10X10_options_str  += '<option value="29TPH84">29TPH84</option>';
+            COD10X10_options_str  += '<option value="29TPH85">29TPH85</option>';
+            COD10X10_options_str  += '<option value="29TPH86">29TPH86</option>';
+            COD10X10_options_str  += '<option value="29TPH87">29TPH87</option>';
+            COD10X10_options_str  += '<option value="29TPH88">29TPH88</option>';
+            COD10X10_options_str  += '<option value="29TPH89">29TPH89</option>';
+            COD10X10_options_str  += '<option value="29TPH95">29TPH95</option>';
+            COD10X10_options_str  += '<option value="29TPH96">29TPH96</option>';
+            COD10X10_options_str  += '<option value="29TPH97">29TPH97</option>';
+            COD10X10_options_str  += '<option value="29TPH98">29TPH98</option>';
+            COD10X10_options_str  += '<option value="29TPH99">29TPH99</option>';
+            COD10X10_options_str  += '<option value="29TPJ40">29TPJ40</option>';
+            COD10X10_options_str  += '<option value="29TPJ41">29TPJ41</option>';
+            COD10X10_options_str  += '<option value="29TPJ50">29TPJ50</option>';
+            COD10X10_options_str  += '<option value="29TPJ51">29TPJ51</option>';
+            COD10X10_options_str  += '<option value="29TPJ52">29TPJ52</option>';
+            COD10X10_options_str  += '<option value="29TPJ60">29TPJ60</option>';
+            COD10X10_options_str  += '<option value="29TPJ61">29TPJ61</option>';
+            COD10X10_options_str  += '<option value="29TPJ62">29TPJ62</option>';
+            COD10X10_options_str  += '<option value="29TPJ70">29TPJ70</option>';
+            COD10X10_options_str  += '<option value="29TPJ71">29TPJ71</option>';
+            COD10X10_options_str  += '<option value="29TPJ72">29TPJ72</option>';
+            COD10X10_options_str  += '<option value="29TPJ80">29TPJ80</option>';
+            COD10X10_options_str  += '<option value="29TPJ81">29TPJ81</option>';
+            COD10X10_options_str  += '<option value="29TPJ82">29TPJ82</option>';
+            COD10X10_options_str  += '<option value="29TPJ90">29TPJ90</option>';
+            COD10X10_options_str  += '<option value="29TPJ91">29TPJ91</option>';
+            COD10X10_options_str  += '<option value="29TPJ92">29TPJ92</option>';
+            COD10X10_options_str  += '<option value="29TQH05">29TQH05</option>';
+            COD10X10_options_str  += '<option value="29TQH06">29TQH06</option>';
+            COD10X10_options_str  += '<option value="29TQH07">29TQH07</option>';
+            COD10X10_options_str  += '<option value="29TQH08">29TQH08</option>';
+            COD10X10_options_str  += '<option value="29TQH09">29TQH09</option>';
+            COD10X10_options_str  += '<option value="29TQH15">29TQH15</option>';
+            COD10X10_options_str  += '<option value="29TQH16">29TQH16</option>';
+            COD10X10_options_str  += '<option value="29TQH17">29TQH17</option>';
+            COD10X10_options_str  += '<option value="29TQH18">29TQH18</option>';
+            COD10X10_options_str  += '<option value="29TQH19">29TQH19</option>';
+            COD10X10_options_str  += '<option value="29TQH26">29TQH26</option>';
+            COD10X10_options_str  += '<option value="29TQH27">29TQH27</option>';
+            COD10X10_options_str  += '<option value="29TQH28">29TQH28</option>';
+            COD10X10_options_str  += '<option value="29TQH29">29TQH29</option>';
+            COD10X10_options_str  += '<option value="29TQH36">29TQH36</option>';
+            COD10X10_options_str  += '<option value="29TQH37">29TQH37</option>';
+            COD10X10_options_str  += '<option value="29TQH38">29TQH38</option>';
+            COD10X10_options_str  += '<option value="29TQH39">29TQH39</option>';
+            COD10X10_options_str  += '<option value="29TQH47">29TQH47</option>';
+            COD10X10_options_str  += '<option value="29TQH48">29TQH48</option>';
+            COD10X10_options_str  += '<option value="29TQH49">29TQH49</option>';
+            COD10X10_options_str  += '<option value="29TQJ00">29TQJ00</option>';
+            COD10X10_options_str  += '<option value="29TQJ01">29TQJ01</option>';
+            COD10X10_options_str  += '<option value="29TQJ02">29TQJ02</option>';
+            COD10X10_options_str  += '<option value="29TQJ10">29TQJ10</option>';
+            COD10X10_options_str  += '<option value="29TQJ11">29TQJ11</option>';
+            COD10X10_options_str  += '<option value="29TQJ12">29TQJ12</option>';
+            COD10X10_options_str  += '<option value="29TQJ20">29TQJ20</option>';
+            COD10X10_options_str  += '<option value="29TQJ21">29TQJ21</option>';
+            COD10X10_options_str  += '<option value="29TQJ22">29TQJ22</option>';
+            COD10X10_options_str  += '<option value="29TQJ23">29TQJ23</option>';
+            COD10X10_options_str  += '<option value="29TQJ30">29TQJ30</option>';
+            COD10X10_options_str  += '<option value="29TQJ31">29TQJ31</option>';
+            COD10X10_options_str  += '<option value="29TQJ32">29TQJ32</option>';
+            COD10X10_options_str  += '<option value="29TQJ33">29TQJ33</option>';
+            COD10X10_options_str  += '<option value="29TQJ40">29TQJ40</option>';
+            COD10X10_options_str  += '<option value="29TQJ41">29TQJ41</option>';
+            COD10X10_options_str  += '<option value="29TQJ42">29TQJ42</option>';
+            COD10X10_options_str  += '<option value="29TQJ43">29TQJ43</option>';
+            COD10X10_options_str  += '<option value="30TTN56">30TTN56</option>';
+            COD10X10_options_str  += '<option value="30TTN57">30TTN57</option>';
+            COD10X10_options_str  += '<option value="30TTN58">30TTN58</option>';
+            COD10X10_options_str  += '<option value="30TTN59">30TTN59</option>';
+            COD10X10_options_str  += '<option value="30TTN65">30TTN65</option>';
+            COD10X10_options_str  += '<option value="30TTN66">30TTN66</option>';
+            COD10X10_options_str  += '<option value="30TTN67">30TTN67</option>';
+            COD10X10_options_str  += '<option value="30TTN68">30TTN68</option>';
+            COD10X10_options_str  += '<option value="30TTN69">30TTN69</option>';
+            COD10X10_options_str  += '<option value="30TTN75">30TTN75</option>';
+            COD10X10_options_str  += '<option value="30TTN76">30TTN76</option>';
+            COD10X10_options_str  += '<option value="30TTN77">30TTN77</option>';
+            COD10X10_options_str  += '<option value="30TTN78">30TTN78</option>';
+            COD10X10_options_str  += '<option value="30TTN79">30TTN79</option>';
+            COD10X10_options_str  += '<option value="30TTN86">30TTN86</option>';
+            COD10X10_options_str  += '<option value="30TTN87">30TTN87</option>';
+            COD10X10_options_str  += '<option value="30TTN88">30TTN88</option>';
+            COD10X10_options_str  += '<option value="30TTN89">30TTN89</option>';
+            COD10X10_options_str  += '<option value="30TTN96">30TTN96</option>';
+            COD10X10_options_str  += '<option value="30TTN97">30TTN97</option>';
+            COD10X10_options_str  += '<option value="30TTN98">30TTN98</option>';
+            COD10X10_options_str  += '<option value="30TTN99">30TTN99</option>';
+            COD10X10_options_str  += '<option value="30TTP50">30TTP50</option>';
+            COD10X10_options_str  += '<option value="30TTP51">30TTP51</option>';
+            COD10X10_options_str  += '<option value="30TTP52">30TTP52</option>';
+            COD10X10_options_str  += '<option value="30TTP60">30TTP60</option>';
+            COD10X10_options_str  += '<option value="30TTP61">30TTP61</option>';
+            COD10X10_options_str  += '<option value="30TTP62">30TTP62</option>';
+            COD10X10_options_str  += '<option value="30TTP63">30TTP63</option>';
+            COD10X10_options_str  += '<option value="30TTP70">30TTP70</option>';
+            COD10X10_options_str  += '<option value="30TTP71">30TTP71</option>';
+            COD10X10_options_str  += '<option value="30TTP72">30TTP72</option>';
+            COD10X10_options_str  += '<option value="30TTP73">30TTP73</option>';
+            COD10X10_options_str  += '<option value="30TTP80">30TTP80</option>';
+            COD10X10_options_str  += '<option value="30TTP81">30TTP81</option>';
+            COD10X10_options_str  += '<option value="30TTP82">30TTP82</option>';
+            COD10X10_options_str  += '<option value="30TTP90">30TTP90</option>';
+            COD10X10_options_str  += '<option value="30TTP91">30TTP91</option>';
+            COD10X10_options_str  += '<option value="30TTP92">30TTP92</option>';
+            COD10X10_options_str  += '<option value="30TUN06">30TUN06</option>';
+            COD10X10_options_str  += '<option value="30TUN07">30TUN07</option>';
+            COD10X10_options_str  += '<option value="30TUN08">30TUN08</option>';
+            COD10X10_options_str  += '<option value="30TUN09">30TUN09</option>';
+            COD10X10_options_str  += '<option value="30TUN17">30TUN17</option>';
+            COD10X10_options_str  += '<option value="30TUN18">30TUN18</option>';
+            COD10X10_options_str  += '<option value="30TUN19">30TUN19</option>';
+            COD10X10_options_str  += '<option value="30TUN27">30TUN27</option>';
+            COD10X10_options_str  += '<option value="30TUN28">30TUN28</option>';
+            COD10X10_options_str  += '<option value="30TUN29">30TUN29</option>';
+            COD10X10_options_str  += '<option value="30TUN37">30TUN37</option>';
+            COD10X10_options_str  += '<option value="30TUN38">30TUN38</option>';
+            COD10X10_options_str  += '<option value="30TUN39">30TUN39</option>';
+            COD10X10_options_str  += '<option value="30TUN48">30TUN48</option>';
+            COD10X10_options_str  += '<option value="30TUN49">30TUN49</option>';
+            COD10X10_options_str  += '<option value="30TUN58">30TUN58</option>';
+            COD10X10_options_str  += '<option value="30TUN59">30TUN59</option>';
+            COD10X10_options_str  += '<option value="30TUN68">30TUN68</option>';
+            COD10X10_options_str  += '<option value="30TUN69">30TUN69</option>';
+            COD10X10_options_str  += '<option value="30TUN79">30TUN79</option>';
+            COD10X10_options_str  += '<option value="30TUP00">30TUP00</option>';
+            COD10X10_options_str  += '<option value="30TUP01">30TUP01</option>';
+            COD10X10_options_str  += '<option value="30TUP02">30TUP02</option>';
+            COD10X10_options_str  += '<option value="30TUP10">30TUP10</option>';
+            COD10X10_options_str  += '<option value="30TUP11">30TUP11</option>';
+            COD10X10_options_str  += '<option value="30TUP12">30TUP12</option>';
+            COD10X10_options_str  += '<option value="30TUP20">30TUP20</option>';
+            COD10X10_options_str  += '<option value="30TUP21">30TUP21</option>';
+            COD10X10_options_str  += '<option value="30TUP30">30TUP30</option>';
+            COD10X10_options_str  += '<option value="30TUP31">30TUP31</option>';
+            COD10X10_options_str  += '<option value="30TUP40">30TUP40</option>';
+            COD10X10_options_str  += '<option value="30TUP41">30TUP41</option>';
+            COD10X10_options_str  += '<option value="30TUP50">30TUP50</option>';
+            COD10X10_options_str  += '<option value="30TUP51">30TUP51</option>';
+            COD10X10_options_str  += '<option value="30TUP60">30TUP60</option>';
+            COD10X10_options_str  += '<option value="30TUP70">30TUP70</option>';
+            sel_COD10X10.innerHTML = COD10X10_options_str;
+            div_COD10X10.appendChild(sel_COD10X10);
+            var lab_COD10X10 = document.createElement('div');
+            lab_COD10X10.innerHTML = 'COD10X10';
+            lab_COD10X10.className = 'filterlabel';
+            div_COD10X10.appendChild(lab_COD10X10);
+            var reset_COD10X10 = document.createElement('div');
+            reset_COD10X10.innerHTML = 'clear filter';
+            reset_COD10X10.className = 'filterlabel';
+            reset_COD10X10.onclick = function() {
+                var options = document.getElementById("sel_COD10X10").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_COD10X10.appendChild(reset_COD10X10);
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        </script>
+    </body>
+</html>
